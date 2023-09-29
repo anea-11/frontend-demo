@@ -2,7 +2,6 @@
 <html>
 <head>
     <title>Video Encoding Page</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/http-status-codes/1.4.0/http-status-codes.min.js"></script>
 </head>
 <body>
     <div id="content">
@@ -18,6 +17,11 @@
         const encodeEndpoint = '/encode';
         const sseEndpoint = '/sse';
 
+        const httpStatus = {
+            OK : 200,
+            SERVICE_UNAVAILABLE : 503
+        }
+
         // Messages to display
         const msgEncodingStarted = 'Encoding in progress...';
         const msgError = 'An error occurred';
@@ -32,24 +36,26 @@
                 method: 'POST'
             };
 
+            encodeButton.disabled = true;
             fetch(backendUrl + encodeEndpoint, fetchOptions)
                 .then(response => {
                     if (response.status === httpStatus.OK) {
-                        encodeButton.disabled = true;
                         statusMessage.textContent = msgEncodingStarted;
                         waitForEncodingCompletion();
                     } else if (response.status === httpStatus.SERVICE_UNAVAILABLE) {
                         statusMessage.textContent = msgServerBusy;
+                        encodeButton.disabled = false;
                     } else {
                         statusMessage.textContent = msgError;
+                        encodeButton.disabled = false;
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
                     statusMessage.textContent = msgError;
-                });
+                    encodeButton.disabled = false;
             });
-
+        });
             function waitForEncodingCompletion() {
                 const sse = new EventSource(backendUrl + sseEndpoint);
 
