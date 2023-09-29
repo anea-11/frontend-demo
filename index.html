@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Video Encoding Page</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/http-status-codes/1.4.0/http-status-codes.min.js"></script>
+</head>
+<body>
+    <div id="content">
+        <button id="encodeButton">ENCODE</button>
+        <p id="statusMessage"></p>
+    </div>
+
+    <script>
+        const encodeButton = document.getElementById('encodeButton');
+        const statusMessage = document.getElementById('statusMessage');
+
+        const backendUrl = 'http://10.10.10.1:9000';
+        const encodeEndpoint = '/encode';
+        const sseEndpoint = '/sse';
+
+        // Messages to display
+        const msgEncodingStarted = 'Encoding in progress...';
+        const msgError = 'An error occurred';
+        const msgEncodingEnded = 'Encoding successful!'
+        const msgServerBusy = 'Server busy, try later'
+
+        // Response messages from backend
+        const rspMsgEncodingEnded = 'Encoding done';
+
+        encodeButton.addEventListener('click', function() {
+            const fetchOptions = {
+                method: 'POST'
+            };
+
+            fetch(backendUrl + encodeEndpoint, fetchOptions)
+                .then(response => {
+                    if (response.status === httpStatus.OK) {
+                        encodeButton.disabled = true;
+                        statusMessage.textContent = msgEncodingStarted;
+                        waitForEncodingCompletion();
+                    } else if (response.status === httpStatus.SERVICE_UNAVAILABLE) {
+                        statusMessage.textContent = msgServerBusy;
+                    } else {
+                        statusMessage.textContent = msgError;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    statusMessage.textContent = msgError;
+                });
+            });
+
+            function waitForEncodingCompletion() {
+                const sse = new EventSource(backendUrl + sseEndpoint);
+
+                sse.onmessage = function(event) {
+                    const response = event.data;
+
+                    if (response === rspMsgEncodingEnded) {
+                        statusMessage.textContent = msgEncodingEnded;
+                        encodeButton.disabled = false;
+                        sse.close();
+                    }
+                };
+
+                sse.onerror = function(event) {
+                    console.error('SSE Error:', event);
+                    statusMessage.textContent = msgError;
+                    encodeButton.disabled = false;
+                    sse.close();
+                };
+            }
+    </script>
+</body>
+</html>
