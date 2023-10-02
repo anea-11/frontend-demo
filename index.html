@@ -44,18 +44,13 @@
                 if (response.includes(rspMsgEncodingStarted)) {
                     statusMessage.textContent = msgEncodingStarted;
                 }
-                else if (response.includes(rspMsgServerBusy)) {
-                    encodeButton.disabled = false;
-                    statusMessage.textContent = msgServerBusy;
-                    sse.close();
-                }
                 else if (response.includes(rspMsgEncodingEnded)) {
                     statusMessage.textContent = msgEncodingEnded;
                     encodeButton.disabled = false;
                     sse.close();
                 }
-                else if (response.includes(rspMsgServerError)) {
-                    statusMessage.textContent = msgError;
+                else if (response.includes(rspMsgServerBusy)) {
+                    statusMessage.textContent = msgServerBusy;
                     encodeButton.disabled = false;
                     sse.close();
                 }
