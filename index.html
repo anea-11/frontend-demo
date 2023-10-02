@@ -30,6 +30,7 @@
 
         // Response messages from backend
         const rspMsgEncodingEnded = 'Encoding done';
+        const rspMsgSeverError = 'Internal server error';
 
         encodeButton.addEventListener('click', function() {
             const fetchOptions = {
@@ -62,8 +63,13 @@
                 sse.onmessage = function(event) {
                     const response = event.data;
 
-                    if (response === rspMsgEncodingEnded) {
+                    if (response.includes(rspMsgEncodingEnded)) {
                         statusMessage.textContent = msgEncodingEnded;
+                        encodeButton.disabled = false;
+                        sse.close();
+                    }
+                    else if (response.includes(rspMsgSeverError)) {
+                        statusMessage.textContent = msgError;
                         encodeButton.disabled = false;
                         sse.close();
                     }
