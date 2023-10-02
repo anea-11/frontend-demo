@@ -15,7 +15,6 @@
 
         const backendUrl = 'http://10.10.10.1:9000';
         const encodeEndpoint = '/encode';
-        const sseEndpoint = '/sse';
 
         const httpStatus = {
             OK : 200,
@@ -58,7 +57,7 @@
             });
         });
             function waitForEncodingCompletion() {
-                const sse = new EventSource(backendUrl + sseEndpoint);
+                const sse = new EventSource(backendUrl + encodeEndpoint);
 
                 sse.onmessage = function(event) {
                     const response = event.data;
