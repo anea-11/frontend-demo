@@ -13,7 +13,7 @@
         const encodeButton = document.getElementById('encodeButton');
         const statusMessage = document.getElementById('statusMessage');
 
-        const backendUrl = 'http://10.10.10.1:9000';
+        const backendUrl = 'http://localhost:9000';
         const encodeEndpoint = '/encode';
 
         const httpStatus = {
@@ -28,59 +28,46 @@
         const msgServerBusy = 'Server busy, try later'
 
         // Response messages from backend
+        const rspMsgEncodingStarted = 'Encoding started';
         const rspMsgEncodingEnded = 'Encoding done';
-        const rspMsgSeverError = 'Internal server error';
+        const rspMsgServerError = 'Internal server error';
+        const rspMsgServerBusy = 'Server busy';
 
         encodeButton.addEventListener('click', function() {
-            const fetchOptions = {
-                method: 'POST'
-            };
 
             encodeButton.disabled = true;
-            fetch(backendUrl + encodeEndpoint, fetchOptions)
-                .then(response => {
-                    if (response.status === httpStatus.OK) {
-                        statusMessage.textContent = msgEncodingStarted;
-                        waitForEncodingCompletion();
-                    } else if (response.status === httpStatus.SERVICE_UNAVAILABLE) {
-                        statusMessage.textContent = msgServerBusy;
-                        encodeButton.disabled = false;
-                    } else {
-                        statusMessage.textContent = msgError;
-                        encodeButton.disabled = false;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    statusMessage.textContent = msgError;
+            const sse = new EventSource(backendUrl + encodeEndpoint);
+
+            sse.onmessage = function(event) {
+                const response = event.data;
+
+                if (response.includes(rspMsgEncodingStarted)) {
+                    statusMessage.textContent = msgEncodingStarted;
+                }
+                else if (response.includes(rspMsgServerBusy)) {
                     encodeButton.disabled = false;
-            });
-        });
-            function waitForEncodingCompletion() {
-                const sse = new EventSource(backendUrl + encodeEndpoint);
-
-                sse.onmessage = function(event) {
-                    const response = event.data;
-
-                    if (response.includes(rspMsgEncodingEnded)) {
-                        statusMessage.textContent = msgEncodingEnded;
-                        encodeButton.disabled = false;
-                        sse.close();
-                    }
-                    else if (response.includes(rspMsgSeverError)) {
-                        statusMessage.textContent = msgError;
-                        encodeButton.disabled = false;
-                        sse.close();
-                    }
-                };
-
-                sse.onerror = function(event) {
-                    console.error('SSE Error:', event);
+                    statusMessage.textContent = msgServerBusy;
+                    sse.close();
+                }
+                else if (response.includes(rspMsgEncodingEnded)) {
+                    statusMessage.textContent = msgEncodingEnded;
+                    encodeButton.disabled = false;
+                    sse.close();
+                }
+                else if (response.includes(rspMsgServerError)) {
                     statusMessage.textContent = msgError;
                     encodeButton.disabled = false;
                     sse.close();
-                };
-            }
+                }
+            };
+
+            sse.onerror = function(event) {
+                console.error('SSE Error:', event);
+                statusMessage.textContent = msgError;
+                encodeButton.disabled = false;
+                sse.close();
+            };
+        });
     </script>
 </body>
 </html>
