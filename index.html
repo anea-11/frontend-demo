@@ -13,8 +13,8 @@
         const encodeButton = document.getElementById('encodeButton');
         const statusMessage = document.getElementById('statusMessage');
 
-        const backendUrl = 'http://localhost:9000';
-        const encodeEndpoint = '/encode';
+        const serverUrl = 'http://localhost:8080';
+        const encodeServiceEndpoint = '/encode';
 
         const httpStatus = {
             OK : 200,
@@ -36,7 +36,7 @@
         encodeButton.addEventListener('click', function() {
 
             encodeButton.disabled = true;
-            const sse = new EventSource(backendUrl + encodeEndpoint);
+            const sse = new EventSource(serverUrl + encodeServiceEndpoint);
 
             sse.onmessage = function(event) {
                 const response = event.data;
