@@ -13,8 +13,8 @@
         const encodeButton = document.getElementById('encodeButton');
         const statusMessage = document.getElementById('statusMessage');
 
-        const serverUrl = 'http://localhost:8080';
-        const encodeServiceEndpoint = '/encode';
+        const serverUrl = 'http://<<template_hostname>>:<<template_port>>';
+        const encodeServiceEndpoint = '/<<template_endpoint>>';
 
         const httpStatus = {
             OK : 200,
