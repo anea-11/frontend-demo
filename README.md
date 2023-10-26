@@ -19,3 +19,4 @@ If env var is not set, default is used:
 WEBSERVER_HOSTNAME=localhost
 WEBSERVER_PORT=8080
 ENCODING_ENDPOINT=encode
+
