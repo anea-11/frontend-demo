@@ -1,5 +1,5 @@
 Build container:
-docker build -t <choose-image-name>:<choose-version-tag> .
+docker build -t -f docker/Dockerfile <choose-image-name>:<choose-version-tag> .
 
 Run container:
 docker run --name <choose-container-name> -p<choose-host-port>:80 -d <image-name>:<version-tag>
