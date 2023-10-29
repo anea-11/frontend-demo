@@ -1,4 +1,9 @@
-# frontend-demo
+# Introduction
+
+- very simple frontend service for "encoding" application
+- forwards requests to the backend encoding service
+- service is containerized, based on nginx docker image
+- nginx serves (the one and only) webpage and is utilized as a reverse proxy for the encoding service
 
 # Docker
 Example run command:
