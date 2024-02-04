@@ -1,7 +1,3 @@
-# encoding-app
-- encoding-app is a simple web-app that allows users to trigger video encoding on the server from web UI
-- It consists of frontend service and [backend service for video encoding](https://github.com/anea-11/x265)
-
 # encoding-app frontend service
 - Is a simple containerized service based on nginx docker container
 - Nginx is used as web server to serve the webpage for triggering encoding
@@ -12,6 +8,10 @@
             proxy_pass http://encoding-service:9000/encode;
         }
     ```
+
+# encoding-app
+- encoding-app is a simple web-app that allows users to trigger video encoding on the server from web UI
+- It consists of frontend service (this repo) and [backend service for video encoding](https://github.com/anea-11/x265)
 
 # Docker and webpage templating
 - Docker image built form Dockerfile in `docker` directory uses environment variables to set the encoding URL on index webpage served by nginx
