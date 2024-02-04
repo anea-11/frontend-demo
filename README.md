@@ -6,11 +6,12 @@
 - Is a simple containerized service based on nginx docker container
 - Nginx is used as web server to serve the webpage for triggering encoding
 - Nginx is used as reverse proxy to access the backend service:
-```conf
-location /encode {
-      proxy_pass http://encoding-service:9000/encode;
-   }
-```
+    ```
+        nginx.conf:
+        location /encode {
+            proxy_pass http://encoding-service:9000/encode;
+        }
+    ```
 
 # Docker
 Example run command:
